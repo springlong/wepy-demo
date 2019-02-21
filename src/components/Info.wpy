@@ -1,0 +1,83 @@
+<template>
+  <view class="info-wrap">
+    <view class="info-title">
+      {{data.title}}
+    </view>
+    <view class="info-content">
+      {{data.cont}}
+    </view>
+    <view class="info-tip" wx:if="{{showTip}}">
+      {{data.tip || 'tip content'}}
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Info extends wepy.component {
+    // 声明组件传值
+    props = {
+      data: Object,
+      showTip: {
+        type: Boolean,
+        default: false
+      }
+    }
+
+    // 组件数据
+    data = {
+    }
+
+    // 计算属性
+    computed = {
+    }
+
+    // 事件处理函数
+    methods = {
+    }
+
+    // WePY组件间通信事件
+    // 子组件中定义的events事件，可以在父组件中通过$broadcast进行触发：
+    // this.$broadcast('onChildEvent', data)
+    events = {
+      // 测试组件间通信
+      onChildEvent: (data) => {
+        console.log('info onChildEvent:', data)
+      }
+    }
+
+    // 组件生命周期：组件加载时触发
+    onLoad() {
+      console.log('info onLoad')
+    }
+
+    // 组件生命周期：组件卸载时触发
+    onUnload() {
+      console.log('info onUnload')
+    }
+  }
+</script>
+<style lang="less">
+  .info-wrap {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 20rpx;
+    text-align: left;
+    font-size: 24rpx;
+    padding: 20rpx 30rpx;
+    border: 1px solid #ccc;
+  }
+  .info-title {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20rpx;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .info-content {
+    padding: 15rpx;
+  }
+  .info-tip {
+    padding: 15rpx;
+  }
+</style>

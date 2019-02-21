@@ -1,0 +1,95 @@
+<template>
+  <view class="loadmore-wrap" wx:if="{{show}}">
+    <image src="../images/public/loadding.gif"/>
+    <text>{{message}}</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class LoadMore extends wepy.component {
+    // 声明组件传值
+    props = {
+      show: {
+        type: Boolean,
+        default: false,
+        // 实现子组件向父组件传值
+        // 如果子组件使用.sync修饰符，那么可以实现双向绑定
+        twoWay: true
+      },
+      message: {
+        default: '正在加载中'
+      }
+    }
+
+    // 组件数据
+    data = {
+    }
+
+    // 监听器
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
+    watch = {
+      show(newValue, olvValue) {
+        if (newValue === true) {
+          this.$emit('onShow', {message: 'onShow-子组件传递的数据信息'})
+          this.$emit('onParentEvent', {message: 'onParentEvent-子组件传递的数据信息'})
+
+          setTimeout(() => {
+            this.show = false
+
+            // 在异步函数中更新数据的时候，
+            // 必须手动调用$apply方法，
+            // 才会触发脏数据检查流程的运行。
+            this.$apply()
+          }, 3000)
+        } else {
+          this.$emit('onHide', {message: 'onHide-子组件传递的数据信息'})
+        }
+      }
+    }
+
+    // 事件处理函数
+    methods = {
+    }
+
+    // WePY组件间通信事件
+    // 子组件中定义的events事件，可以在父组件中通过$broadcast进行触发：
+    // this.$broadcast('onChildEvent', data)
+    events = {
+      // 测试组件间通信
+      onChildEvent: (data) => {
+        console.log('loadMore onChildEvent:', data)
+      }
+    }
+
+    // 组件生命周期：组件加载时触发
+    onLoad() {
+      console.log('loadMore onLoad')
+    }
+
+    // 组件生命周期：组件卸载时触发
+    onUnload() {
+      console.log('loadMore onUnload')
+    }
+  }
+</script>
+<style lang="less">
+  .loadmore-wrap {
+    margin: ~"15rpx" auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text {
+      font-size: ~"30rpx";
+      color: #999;
+      margin-left: ~"10rpx";
+    }
+
+    image {
+      width: ~"30rpx";
+      height: ~"30rpx";
+    }
+  }
+</style>

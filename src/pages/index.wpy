@@ -1,0 +1,339 @@
+<template>
+  <view class="container">
+    <!-- 微信用户信息获取 -->
+    <view class="module-title">用户信息</view>
+    <view class="userinfo" wx:if="{{userInfo}}">
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" />
+      <view class="userinfo-nickname">昵称：{{userInfo.nickName}}</view>
+    </view>
+    <view class="row" wx:else>
+      <button open-type="getUserInfo" bindgetuserinfo="handleGetUserInfo">获取用户信息</button>
+    </view>
+
+    <!-- 路由跳转 -->
+    <view class="module-title">路由跳转</view>
+    <view class="group-wrap">
+      <view class="row">
+        <navigator url="/pages/detail">navigate 跳转至详情页</navigator>
+      </view>
+      <view class="row">
+        <navigator url="/pages/detail" open-type="redirect">redirect 跳转至详情页</navigator>
+      </view>
+      <view class="row">
+        <button @tap="handleNavigateToDetail">navigate 跳转至详情页</button>
+      </view>
+      <view class="row">
+        <button @tap="handleRedirectToDetail">redirect 跳转至详情页</button>
+      </view>
+    </view>
+
+    <!-- 同一组件的多次使用 -->
+    <view class="module-title">同一组件的多次使用</view>
+    <PanelIntrol class="panel--index">
+      <view slot="title">关于</view>
+      <view slot="content">
+        <view>{{name}}</view>
+        <view>{{desc}}</view>
+      </view>
+    </PanelIntrol>
+    <PanelIntrol>
+      <view slot="title">介绍</view>
+      <view slot="content">
+        <view>为什么要选择WePY</view>
+        <view>主要功能特性</view>
+        <view>应用案例</view>
+      </view>
+    </PanelIntrol>
+    <PanelGood>
+      <view slot="title">优势</view>
+      <view slot="content">
+        <view>组件化</view>
+        <view>接近Vue的开发体验</view>
+        <view>可以用npm包 </view>
+      </view>
+    </PanelGood>
+
+    <!-- 原生循环方式 -->
+    <view class="module-title">原生循环方式</view>
+    <view class="group-wrap" wx:for="{{list}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+      <view class="group-title">{{item.title}}</view>
+      <view class="group-content">{{item.cont}}</view>
+    </view>
+
+    <!-- 组件循环方式 -->
+    <!-- 注意，使用for属性，而不是使用wx:for属性 -->
+    <!-- WePY 1.x 版本中，组件使用的是静态编译组件，即组件是在编译阶段编译进页面的，每个组件都是唯一的一个实例，目前只提供简单的 repeat 支持。 -->
+    <!-- 不支持在 repeat 的组件中去使用 computed, watch 等特性。 -->
+    <view class="module-title">组件循环方式</view>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <Info :data="item" showTip="true" />
+    </repeat>
+
+    <!-- 组件slot三级传递测试 -->
+    <view class="module-title">组件slot三级传递测试</view>
+    <view class="group-wrap">
+      <TestSlot>
+        页面传递给组件的slot内容
+      </TestSlot>
+    </view>
+
+    <!-- 组件通信 -->
+    <view class="module-title">组件通信</view>
+    <view class="group-wrap">
+      <view class="row">
+        <button @tap="handleTriggerBroadcast">父组件派发事件给子组件</button>
+      </view>
+      <view class="row">
+        <button @tap="handleLoadMore">子组件传递事件给父组件</button>
+        <!-- 动态传值使用冒号(:)，加上.sync修饰符来达到父组件数据绑定至子组件的效果 -->
+        <!-- 事件修饰符添加.user后缀，表示绑定用户自定义组件，可以在子组件中通过$emit触发 -->
+        <LoadMore
+          message="加载中，请稍等..."
+          :show.sync="isShowMore"
+          @onShow.user="handleEventOnShow"
+          @onHide.user="handleEventOnHide"
+        />
+      </view>
+      <view class="row">
+      <!-- 父组件访问子组件的方法  -->
+        <button @tap="handleParentToChild">父组件访问子组件的方法</button>
+      </view>
+      <CompA />
+      <CompB />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixins from '../mixins/testMixins'
+  import Panel from '@/components/Panel'
+  import LoadMore from '@/components/LoadMore'
+  import Info from '@/components/Info'
+  import TestSlot from '@/components/TestSlot'
+  import CompA from '@/components/CompA'
+  import CompB from '@/components/CompB'
+
+  export default class Index extends wepy.page {
+    // 页面配置
+    // 只在Page实例中存在的配置数据，对应于原生的page.json文件
+    config = {
+      navigationBarTitleText: '首页'
+    }
+
+    // 组件引用
+    // 为了便于区分自定义组件，建议引用时采用首字母大写形式
+    // 需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID的组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+    // 如果需要避免这个问题，则需要分配多个组件ID和实例，为两个相同组件的不同实例分配不同的组件ID，从而避免数据同步变化的问题。
+    components = {
+      PanelIntrol: Panel,
+      PanelGood: Panel,
+      LoadMore: LoadMore,
+      Info: Info,
+      TestSlot: TestSlot,
+      CompA: CompA,
+      CompB: CompB
+    }
+
+    // 混入
+    mixins = [testMixins]
+
+    // 组件数据
+    data = {
+      // 组件无法便捷传递true和false，建议使用data声明同名数据
+      false: false,
+      true: true,
+      // 用户数据
+      userInfo: false,
+      // 显示更多
+      isShowMore: false,
+      name: 'WePY',
+      desc: '让小程序支持组件化开发的框架.',
+      list: [
+        {
+          title: '三体 （刘慈欣著科幻小说）',
+          cont: '《三体》是刘慈欣创作的系列长篇科幻小说，由《三体》、《三体Ⅱ·黑暗森林》、《三体Ⅲ·死神永生》组成，第一部于2006年5月起在《科幻世界》杂志上连载，第二部于2008年5月首次出版，第三部则于2010年11月出版。',
+          tip: ''
+        },
+        {
+          title: '星际迷航 （科幻影视系列作品）',
+          cont: '《星际迷航》（Star Trek，又译作《星际旅行》等）是由美国派拉蒙影视制作的科幻影视系列，由6部电视剧、1部动画片、13部电影组成。该系列最初由编剧吉恩·罗登贝瑞（Gene Roddenberry）于20世纪60年代提出，经过近50年的不断发展而逐步完善，成为全世界最著名的科幻影视系列之一。',
+          tip: ''
+        }
+      ]
+    }
+
+    // 计算属性
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    // 监听器
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
+    watch = {
+      isShowMore(newValue, oldValue) {
+        console.log(`index watch-isShowMore: ${oldValue} -> ${newValue}`)
+      }
+    }
+
+    // 事件处理函数
+    // 声明页面wxml中标签的事件处理函数。
+    // 注意，此处只用于声明页面wxml中标签的bind、catch事件，
+    // 自定义方法需以自定义方法的方式声明。
+    methods = {
+      // 获取用户信息回调
+      handleGetUserInfo(evt) {
+        console.log('index handleGetUserInfo:', evt.detail)
+
+        // 保存用户信息
+        // 在Page页面实例中，可以通过this.$parent来访问App实例。
+        // 在任一组件中，可以通过this.$root.$parent来访问App实例。
+        this.$parent.globalData.userInfo = evt.detail.userInfo
+
+        // 数据更新
+        this.userInfo = evt.detail.userInfo
+      },
+
+      // 跳转至详情页
+      handleNavigateToDetail(id) {
+        wepy.navigateTo({ url: '/pages/detail' })
+      },
+      handleRedirectToDetail(id) {
+        wepy.redirectTo({ url: '/pages/detail' })
+      },
+
+      // 触发子组件定义的events
+      handleTriggerBroadcast() {
+        // 父组件派发事件给子组件，所有子组件都会收到此广播事件
+        this.$broadcast('onChildEvent', {a: 1, b: 2})
+      },
+
+      // 点击加载更多
+      handleLoadMore() {
+        // 数据更新
+        this.isShowMore = true
+      },
+
+      // 父组件访问子组件的方法
+      handleParentToChild() {
+        this.$invoke('CompA', 'testMethod', {message: 'data from Index'})
+      },
+
+      // 测试组件自定义事件处理函数
+      handleEventOnShow(info, event) {
+        console.log('index handleEventOnShow:', info)
+      },
+
+      // 测试组件自定义事件处理函数
+      handleEventOnHide(info, event) {
+        console.log('index handleEventOnHide:', info)
+      },
+
+      // 用于测试方法执行
+      testMethod(data) {
+        console.log('index testMethod:', data)
+      }
+    }
+
+    // WePY组件间通信事件
+    // 存放响应组件之间通过 $broadcast $emit $invoke 所传递的事件的函数
+    //
+    // 父组件定义的events事件，可以在子组件中通过$emit触发
+    // 父组件传递给子组件的自定义事件，也可以在子组件中通过$emit触发
+    // 在子组件中通过$emit触发事件，事件发起组件的所有祖先组件都会依次接收到emit事件
+    //
+    // 子组件定义的events事件，可以在父组件中通过$broadcast进行触发
+    // 父组件通过$broadcast派发事件给子组件，所有子组件都会收到此广播事件
+    //
+    // 组件之间的通信可以通过$invoke进行触发
+    // 调用子组件的方法：this.$invoke('ComoponentName', 'MethodName', 'sendData')
+    // 调用自己的方法：this.$invoke('./', 'MethodName', 'sendData')
+    // 调用父组件的方法：this.$invoke('../', 'MethodName', 'sendData')
+    // 调用兄弟组件的方法：this.$invoke('../ComoponentName', 'MethodName', 'sendData')
+    // 调用根页面的方法(this.$root)：this.$invoke('/', 'MethodName', 'sendData')
+    events = {
+      onParentEvent(info, event) {
+        console.log('index onParentEvent:', info)
+      }
+    }
+
+    // page生命周期：页面加载时触发
+    // 一个页面只会调用一次
+    onLoad(query) {
+      console.log('index onLoad:', query)
+
+      // 识别用户数据
+      const userInfo = this.$parent.globalData.userInfo
+      if (userInfo) {
+        this.userInfo = userInfo
+      }
+
+      // 加载页面数据
+      this.loadPageData()
+    }
+
+    // page生命周期：页面显示/切入前台时触发
+    onShow() {
+      console.log('index onShow')
+    }
+
+    // page生命周期：页面初次渲染完成时触发
+    // 一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
+    onReady() {
+      console.log('index onReady')
+    }
+
+    // page生命周期：页面隐藏/切入后台时触发
+    // 如 navigateTo 或底部 tab 切换到其他页面，小程序切入后台等。
+    onHide() {
+      console.log('index onHide')
+    }
+
+    // page生命周期：页面卸载时触发
+    // 如redirectTo或navigateBack到其他页面时
+    onUnload() {
+      console.log('index onUnload')
+    }
+
+    // 自定义方法放在外层
+    loadPageData() {
+      console.log('index loadPageData')
+    }
+  }
+</script>
+
+<style lang="less">
+  .userinfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .userinfo-avatar {
+    width: 150rpx;
+    height: 150rpx;
+    border-radius: 50%;
+  }
+
+  .userinfo-nickname {
+    margin-top: 20rpx;
+    color: #aaa;
+  }
+
+  // 对组件样式进行重置
+  .panel-title-extra {
+    font-size: 24rpx;
+    color: gray;
+  }
+  // 使用新增类名对组件样式进行覆盖
+  .panel--index {
+    .panel-title {
+      padding-bottom: 10rpx;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20rpx;
+    }
+  }
+</style>

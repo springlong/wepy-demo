@@ -1,0 +1,40 @@
+<template>
+  <view class="comp-b">
+    <view class="row">
+      <button @tap="handleVisitOtherMethods">CompB组件访问CompA组件的方法</button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class CompB extends wepy.component {
+    // 组件引用
+    components = {
+    }
+
+    // 声明组件传值
+    props = {
+    }
+
+    // 组件数据
+    data = {
+    }
+
+    // 事件处理函数
+    methods = {
+      // 与兄弟节点通信
+      handleVisitOtherMethods() {
+        this.$invoke('../CompA', 'testMethod', {message: 'data from CompB'})
+      },
+
+      // 用于测试方法执行
+      testMethod(data) {
+        console.log('CompB testMethod:', data)
+      }
+    }
+  }
+</script>
+<style lang="less">
+
+</style>

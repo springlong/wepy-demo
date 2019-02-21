@@ -1,0 +1,49 @@
+<template>
+  <view class="test-slot">
+    <!-- page -> parent -> child 组件slot传递的三级测试-->
+    <!-- 直接传slot失败 -->
+    <TestSlotChild>
+      <view>直接传slot失败</view>
+      <slot></slot>
+    </TestSlotChild>
+    <!-- 需要包装一层才能进一步传递 -->
+    <TestSlotChild>
+      <view class="test-slot-box">
+        <view>需要包装一层才能进一步传递</view>
+        <slot></slot>
+      </view>
+    </TestSlotChild>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import TestSlotChild from './TestSlotChild'
+
+  export default class TestSlot extends wepy.component {
+    // 组件引用
+    components = {
+      TestSlotChild: TestSlotChild
+    }
+
+    // 声明组件传值
+    props = {
+    }
+
+    // 组件数据
+    data = {
+    }
+
+    // 监听器
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
+    watch = {
+    }
+
+    // 事件处理函数
+    methods = {
+    }
+  }
+</script>
+<style lang="less">
+
+</style>

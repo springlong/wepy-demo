@@ -1,0 +1,48 @@
+<template>
+  <view class="comp-a">
+    <view class="row">
+      <button @tap="handleChildToParent">子组件访问父组件的方法</button>
+    </view>
+    <view class="row">
+      <button @tap="handleVisitOtherMethods">CompA组件访问CompB组件的方法</button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class CompA extends wepy.component {
+    // 组件引用
+    components = {
+    }
+
+    // 声明组件传值
+    props = {
+    }
+
+    // 组件数据
+    data = {
+    }
+
+    // 事件处理函数
+    methods = {
+      // 与父组件通信
+      handleChildToParent() {
+        this.$invoke('../', 'testMethod', {message: 'data from CompA'})
+      },
+
+      // 与兄弟节点通信
+      handleVisitOtherMethods() {
+        this.$invoke('../CompB', 'testMethod', {message: 'data from CompA'})
+      },
+
+      // 用于测试方法执行
+      testMethod(data) {
+        console.log('CompA testMethod:', data)
+      }
+    }
+  }
+</script>
+<style lang="less">
+
+</style>

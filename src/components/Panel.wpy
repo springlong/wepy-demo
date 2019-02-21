@@ -1,0 +1,103 @@
+<template>
+  <view class="panel">
+    <view class="panel-title">
+      <view class="panel-title-value">
+        <slot name="title">
+          Title
+        </slot>
+      </view>
+      <view class="panel-title-extra">
+        <text @tap="handleChangeView">{{showName}}</text>
+      </view>
+    </view>
+    <view class="panel-content {{stateName}}">
+      <slot name="content"></slot>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Panel extends wepy.component {
+    // 组件引用
+    components = {
+    }
+
+    // 声明组件传值
+    props = {
+    }
+
+    // 组件数据
+    data = {
+      isShow: true
+    }
+
+    // 计算属性
+    computed = {
+      showName() {
+        return this.isShow ? '收起' : '展开'
+      },
+
+      stateName() {
+        return this.isShow ? 'isShow' : 'isHide'
+      }
+    }
+
+    // 事件处理函数
+    methods = {
+      handleChangeView() {
+        this.isShow = !this.isShow
+      }
+    }
+
+    // WePY组件间通信事件
+    // 子组件中定义的events事件，可以在父组件中通过$broadcast进行触发：
+    // this.$broadcast('onChildEvent', data)
+    events = {
+      // 测试组件间通信
+      onChildEvent: (data) => {
+        console.log('panel onChildEvent:', data)
+      }
+    }
+
+    // 组件生命周期：组件加载时触发
+    onLoad() {
+      console.log('panel onLoad')
+    }
+
+    // 组件生命周期：组件卸载时触发
+    onUnload() {
+      console.log('panel onUnload')
+    }
+  }
+</script>
+<style lang="less">
+  .panel {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20rpx;
+    text-align: left;
+    font-size: 24rpx;
+    padding: 20rpx 30rpx;
+    border: 1px solid #ccc;
+  }
+  .panel-title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 28rpx;
+    font-weight: bold;
+
+    +.panel-content {
+      margin-top: 10rpx;
+    }
+  }
+  .panel-content {
+    &.isShow {
+      display: block;
+    }
+
+    &.isHide {
+      display: none;
+    }
+  }
+</style>

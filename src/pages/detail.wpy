@@ -1,0 +1,107 @@
+<template>
+  <view class="container">
+    <view class="row">
+      <text>详情展示页</text>
+    </view>
+    <view class="row">
+      <navigator url="/pages/index">navigate 返回首页</navigator>
+    </view>
+    <view class="row">
+      <navigator url="/pages/index" open-type="redirect">redirect 返回首页</navigator>
+    </view>
+    <view class="row">
+      <navigator url="/pages/index" open-type="navigateBack">navigateBack 返回首页</navigator>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Detail extends wepy.page {
+    // 页面配置
+    // 只在Page实例中存在的配置数据，对应于原生的page.json文件
+    config = {
+      navigationBarTitleText: '详情展示页'
+    }
+
+    // 组件引用
+    // 为了便于区分自定义组件，建议引用时采用首字母大写形式
+    components = {
+    }
+
+    // 混入
+    mixins = []
+
+    // 组件数据
+    data = {
+    }
+
+    // 计算属性
+    computed = {
+    }
+
+    // 监听器
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
+    watch = {
+    }
+
+    // 事件处理函数
+    // 声明页面wxml中标签的事件处理函数。
+    // 注意，此处只用于声明页面wxml中标签的bind、catch事件，
+    // 自定义方法需以自定义方法的方式声明
+    methods = {
+    }
+
+    // WePY组件间通信事件
+    // 存放响应组件之间通过 $broadcast $emit $invoke 所传递的事件的函数
+    events = {
+    }
+
+    // page生命周期：页面加载时触发
+    // 一个页面只会调用一次
+    onLoad(query) {
+      console.log('detail onLoad')
+
+      // 在Page页面实例中，可以通过this.$parent来访问App实例。
+      // 在任一组件中，可以通过this.$root.$parent来访问App实例。
+      console.log('detail 全局数据:', this.$parent.globalData)
+
+      // 加载页面数据
+      this.loadPageData()
+    }
+
+    // page生命周期：页面显示/切入前台时触发
+    onShow() {
+      console.log('detail onShow')
+    }
+
+    // page生命周期：页面初次渲染完成时触发
+    // 一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
+    onReady() {
+      console.log('detail onReady')
+    }
+
+    // page生命周期：页面隐藏/切入后台时触发
+    // 如 navigateTo 或底部 tab 切换到其他页面，小程序切入后台等。
+    onHide() {
+      console.log('detail onHide')
+    }
+
+    // page生命周期：页面卸载时触发
+    // 如redirectTo或navigateBack到其他页面时
+    onUnload() {
+      console.log('detail onUnload')
+    }
+
+    // 自定义方法放在外层
+    loadPageData() {
+      console.log('detail loadPageData')
+    }
+  }
+</script>
+
+<style lang="less">
+
+</style>
