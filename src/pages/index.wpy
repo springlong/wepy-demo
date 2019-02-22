@@ -14,10 +14,10 @@
     <view class="module-title">路由跳转</view>
     <view class="group-wrap">
       <view class="row">
-        <navigator url="/pages/detail">navigate 跳转至详情页</navigator>
+        <navigator url="/pages/detail?id=10088&from=home">navigate 跳转至详情页</navigator>
       </view>
       <view class="row">
-        <navigator url="/pages/detail" open-type="redirect">redirect 跳转至详情页</navigator>
+        <navigator url="/pages/detail?id=10088&from=home" open-type="redirect">redirect 跳转至详情页</navigator>
       </view>
       <view class="row">
         <button @tap="handleNavigateToDetail">navigate 跳转至详情页</button>
@@ -39,17 +39,18 @@
     <PanelIntrol>
       <view slot="title">介绍</view>
       <view slot="content">
-        <view>为什么要选择WePY</view>
-        <view>主要功能特性</view>
-        <view>应用案例</view>
+        <view>WePY 框架在开发过程中参考了 Vue 等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于 MVVM 架构模式, 并支持ES6/7的一些新特性。</view>
       </view>
     </PanelIntrol>
     <PanelGood>
-      <view slot="title">优势</view>
+      <view slot="title">功能特性</view>
       <view slot="content">
-        <view>组件化</view>
-        <view>接近Vue的开发体验</view>
-        <view>可以用npm包 </view>
+        <view>开发模式转换</view>
+        <view>支持组件化开发</view>
+        <view>支持加载外部NPM包</view>
+        <view>单文件模式，目录结构更清晰，开发更方便</view>
+        <view>默认使用babel编译，支持ES6/7的一些新特性</view>
+        <view>针对原生API进行优化</view>
       </view>
     </PanelGood>
 
@@ -69,8 +70,8 @@
       <Info :data="item" showTip="true" />
     </repeat>
 
-    <!-- 组件slot三级传递测试 -->
-    <view class="module-title">组件slot三级传递测试</view>
+    <!-- 组件slot的多层嵌套 -->
+    <view class="module-title">组件slot的多层嵌套</view>
     <view class="group-wrap">
       <TestSlot>
         页面传递给组件的slot内容
@@ -107,12 +108,14 @@
 <script>
   import wepy from 'wepy'
   import testMixins from '../mixins/testMixins'
-  import Panel from '@/components/Panel'
-  import LoadMore from '@/components/LoadMore'
-  import Info from '@/components/Info'
-  import TestSlot from '@/components/TestSlot'
-  import CompA from '@/components/CompA'
-  import CompB from '@/components/CompB'
+  import Panel from '@/components/TestDemo/Panel'
+  import LoadMore from '@/components/TestDemo/LoadMore'
+  import Info from '@/components/TestDemo/Info'
+  import TestSlot from '@/components/TestDemo/TestSlot'
+  import CompA from '@/components/TestDemo/CompA'
+  import CompB from '@/components/TestDemo/CompB'
+
+  import Actions from '@/actions/actions'
 
   export default class Index extends wepy.page {
     // 页面配置
@@ -199,10 +202,11 @@
 
       // 跳转至详情页
       handleNavigateToDetail(id) {
-        wepy.navigateTo({ url: '/pages/detail' })
+        wepy.navigateTo({ url: '/pages/detail?id=10088&from=home' })
       },
+
       handleRedirectToDetail(id) {
-        wepy.redirectTo({ url: '/pages/detail' })
+        wepy.redirectTo({ url: '/pages/detail?id=10088&from=home' })
       },
 
       // 触发子组件定义的events
@@ -211,7 +215,7 @@
         this.$broadcast('onChildEvent', {a: 1, b: 2})
       },
 
-      // 点击加载更多
+      // 子组件传递事件给父组件（点击加载更多）
       handleLoadMore() {
         // 数据更新
         this.isShowMore = true
@@ -223,12 +227,12 @@
       },
 
       // 测试组件自定义事件处理函数
-      handleEventOnShow(info, event) {
+      handleEventOnShow(info, evt) {
         console.log('index handleEventOnShow:', info)
       },
 
       // 测试组件自定义事件处理函数
-      handleEventOnHide(info, event) {
+      handleEventOnHide(info, evt) {
         console.log('index handleEventOnHide:', info)
       },
 
@@ -255,7 +259,7 @@
     // 调用兄弟组件的方法：this.$invoke('../ComoponentName', 'MethodName', 'sendData')
     // 调用根页面的方法(this.$root)：this.$invoke('/', 'MethodName', 'sendData')
     events = {
-      onParentEvent(info, event) {
+      onParentEvent(info, evt) {
         console.log('index onParentEvent:', info)
       }
     }
@@ -263,10 +267,33 @@
     // page生命周期：页面加载时触发
     // 一个页面只会调用一次
     onLoad(query) {
-      console.log('index onLoad:', query)
+      console.log('index onLoad:')
+
+      // page和组件的this示例包含下属有用的信息：
+      /*
+        this.$parent
+        |-- 当前组件的父级元素。
+        |-- 对于一个page来说，this.$parent表示App实例。
+        |-- 如果一个组件在page下，this.$parent就表示page实例。
+        |-- 如果一个组件在另一个组件下，this.$parent就是它的父级组件。
+      */
+      /*
+        this.$root
+        |-- 当前所在的根组件，即page实例。
+        |-- 为了在page和子组件下访问App的全局数据的方式一致，建议通过下面的代码进行访问：
+        |-- this.$root.$parent.globalData
+      */
+      /*
+        this.$wxpage
+        |-- 当前所在的page的页面信息。
+        |-- this.$wxpage.route 页面路由
+        |-- this.$wxpage.options 页面参数对象
+      */
+      console.log('index query:', query)
+      console.log('index this:', this)
 
       // 识别用户数据
-      const userInfo = this.$parent.globalData.userInfo
+      const userInfo = this.$root.$parent.globalData.userInfo
       if (userInfo) {
         this.userInfo = userInfo
       }
@@ -301,6 +328,16 @@
     // 自定义方法放在外层
     loadPageData() {
       console.log('index loadPageData')
+
+      // 请求数据
+      Actions.getHomeData({
+        city: 'shanghai',
+        model: 'more',
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 </script>

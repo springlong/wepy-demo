@@ -1,25 +1,29 @@
 # wepy demo
 
-微信小程序 wepy demo！
+微信小程序 wepy demo
 
 ## wepy小程序开发基本规范
+
+### src目录结构
+
+
 
 ### 文件命名规则
 
 图片命名：统一采用驼峰式命名方式，`error.png`、`errorLarge.png`等，并且同一类文件要求使用文件夹分类存放。
 
-页面命名：统一采用驼峰式命名方式，`home.wpy`、`list.wpy`、`detail.wpy`
+页面命名：统一采用驼峰式命名方式，`home.wpy`、`list.wpy`、`detail.wpy`。
 
-组件命名：统一采用首字母大写的形式命名，`Panel.wpy`、`SearchResult.wpy`、`LoadingMore.wpy`;
+组件命名：统一采用首字母大写的形式命名，`Panel.wpy`、`SearchResult.wpy`、`LoadingMore.wpy`。
 
 ### 组件的引用声明统一采用首字母大写，提高辨识度
 
 ```js
-import LoadMore from '../components/LoadMore';
+import LoadMore from '../components/LoadMore'
 
 components = {
   LoadMore: LoadMore
-};
+}
 ```
 
 ### 组件的自定义事件统一使用 `on` 前缀
@@ -51,5 +55,5 @@ methods = {
   handleDownLoad() {
 
   }
-};
+}
 ```
