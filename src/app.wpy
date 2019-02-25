@@ -11,8 +11,8 @@
   export default class extends wepy.app {
     config = {
       pages: [
-        'pages/index',
-        'pages/detail'
+        'pages/home/index',
+        'pages/detail/index'
       ],
       window: {
         backgroundTextStyle: 'light',
@@ -104,6 +104,7 @@
     padding: 20rpx 30rpx;
     border: 1px solid #ccc;
   }
+
   .group-title {
     display: flex;
     justify-content: space-between;
@@ -111,6 +112,7 @@
     font-size: 28rpx;
     font-weight: bold;
   }
+
   .group-content {
     padding: 15rpx;
   }

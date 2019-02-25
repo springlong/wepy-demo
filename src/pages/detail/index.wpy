@@ -1,19 +1,19 @@
 <template>
   <view class="container">
-    <view class="page-done" wx:if="pageDone">
+    <view class="page-done" wx:if="{{pageDone}}">
       <view class="group-wrap">
         <view class="row">{{pageData.title}}</view>
         <view class="row">{{pageData.content}}</view>
       </view>
       <view class="group-wrap">
         <view class="row">
-          <navigator url="/pages/index">navigate 返回首页</navigator>
+          <navigator url="/pages/home/index">navigate 返回首页</navigator>
         </view>
         <view class="row">
-          <navigator url="/pages/index" open-type="redirect">redirect 返回首页</navigator>
+          <navigator url="/pages/home/index" open-type="redirect">redirect 返回首页</navigator>
         </view>
         <view class="row">
-          <navigator url="/pages/index" open-type="navigateBack">navigateBack 返回首页</navigator>
+          <navigator url="/pages/home/index" open-type="navigateBack">navigateBack 返回首页</navigator>
         </view>
       </view>
     </view>
@@ -44,7 +44,6 @@
     data = {
       // 页面数据加载完成
       pageDone: false,
-
       // 页面数据
       pageData: {},
     }
@@ -76,10 +75,12 @@
     onLoad(query) {
       console.log('detail onLoad:')
       console.log('detail query:', query)
+      console.log('detail $wxpage.options:', this.$wxpage.options)
+      console.log('detail $wxpage.route:', this.$wxpage.route)
       console.log('detail this:', this)
 
       // 在Page页面实例中，可以通过this.$parent来访问App实例。
-      // 在任一页面或组件中，可以通过this.$root.$parent来访问App实例。
+      // 在任一页面或组件中，可以通过this.$root.$parent来访问App实例。（建议采用）
       console.log('detail 全局数据:', this.$root.$parent.globalData)
 
       // 加载页面数据
@@ -120,10 +121,14 @@
 
       // 接口请求完成
       if (res.data.errorCode === 0) {
+        // 更新页面数据
         this.pageDone = true
         this.pageData = res.data.data || {}
+
+        // 在异步函数中更新数据的时候，必须手动调用$apply方法，才会触发脏数据检查流程的运行。
+        this.$apply()
       } else {
-        console.log('index loadPageData err:', res)
+        console.log('detail loadPageData err:', res)
       }
     }
   }

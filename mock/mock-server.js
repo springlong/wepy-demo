@@ -41,32 +41,34 @@ const requestCallback = (request, response, params) => {
     matchData = routeMath(params)
   }
 
+  let code = 200
+  let returnContent = ''
+  let headInfo = {}
+
   if (matchData) {
-    const code = 200
-    const returnContent = JSON.stringify(matchData)
-
-    // 写入头信息
-    response.writeHead(code, {
+    code = 200
+    headInfo = {
       'Content-Type': 'application/json;charset=UTF-8'
-    })
-
-    // 写入返回内容
-    response.write(returnContent)
-
-    // 发送响应数据
-    response.end()
+    }
+    returnContent = JSON.stringify(matchData)
   } else {
-    // 写入头信息
-    response.writeHead(404, {
+    code = 404
+    headInfo = {
       'Content-Type': 'text/html;charset=UTF-8'
-    })
-
-    // 写入返回内容
-    response.write('您访问的url不存在，请配置Mock Server路由！')
-
-    // 发送响应数据
-    response.end()
+    }
+    returnContent = '您访问的url不存在，请配置Mock Server路由！'
   }
+
+  // 写入头信息
+  response.writeHead(code, headInfo)
+
+  // 写入返回内容
+  response.write(returnContent)
+
+  // 发送响应数据
+  setTimeout(() => {
+    response.end()
+  }, 1000)
 }
 
 // 创建服务器

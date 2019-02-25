@@ -11,16 +11,16 @@
     </view>
 
     <!-- 路由跳转 -->
-    <view class="module-title">路由跳转</view>
+    <view class="module-title">路由跳转&事件绑定</view>
     <view class="group-wrap">
       <view class="row">
-        <navigator url="/pages/detail?id=10088&from=home">navigate 跳转至详情页</navigator>
+        <navigator url="/pages/detail/index?id=10088&from=home">navigate 跳转至详情页</navigator>
       </view>
       <view class="row">
-        <navigator url="/pages/detail?id=10088&from=home" open-type="redirect">redirect 跳转至详情页</navigator>
+        <navigator url="/pages/detail/index?id=10088&from=home" open-type="redirect">redirect 跳转至详情页</navigator>
       </view>
       <view class="row">
-        <button @tap="handleNavigateToDetail">navigate 跳转至详情页</button>
+        <button @tap="handleNavToDetail('10099', {{currentPageName}})" data-a="1">navigate 跳转至详情页</button>
       </view>
       <view class="row">
         <button @tap="handleRedirectToDetail">redirect 跳转至详情页</button>
@@ -29,11 +29,11 @@
 
     <!-- 同一组件的多次使用 -->
     <view class="module-title">同一组件的多次使用</view>
-    <PanelIntrol class="panel--index">
+    <PanelIntrol class="panel--special">
       <view slot="title">关于</view>
       <view slot="content">
-        <view>{{name}}</view>
-        <view>{{desc}}</view>
+        <view>{{pageData.name}}</view>
+        <view>{{pageData.desc}}</view>
       </view>
     </PanelIntrol>
     <PanelIntrol>
@@ -102,12 +102,29 @@
       <CompA />
       <CompB />
     </view>
+
+    <!-- 微信API调用 -->
+    <view class="module-title">微信API调用</view>
+    <view class="group-wrap">
+      <view class="row">
+        <button @tap="handleShowLoading">显示loading框</button>
+      </view>
+      <view class="row">
+        <button @tap="handleShowToast">显示消息提示框</button>
+      </view>
+      <view class="row">
+        <button @tap="handleShowModal">显示模态对话框</button>
+      </view>
+      <view class="row">
+        <button @tap="handleShowActionSheet">显示操作菜单</button>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import testMixins from '../mixins/testMixins'
+  import testMixins from '@/mixins/testMixins'
   import Panel from '@/components/TestDemo/Panel'
   import LoadMore from '@/components/TestDemo/LoadMore'
   import Info from '@/components/TestDemo/Info'
@@ -146,12 +163,16 @@
       // 组件无法便捷传递true和false，建议使用data声明同名数据
       false: false,
       true: true,
+      // 页面数据加载完成
+      pageDone: false,
+      // 页面数据
+      pageData: {},
       // 用户数据
       userInfo: false,
       // 显示更多
       isShowMore: false,
-      name: 'WePY',
-      desc: '让小程序支持组件化开发的框架.',
+      // 测试数据
+      currentPageName: 'home',
       list: [
         {
           title: '三体 （刘慈欣著科幻小说）',
@@ -200,13 +221,14 @@
         this.userInfo = evt.detail.userInfo
       },
 
-      // 跳转至详情页
-      handleNavigateToDetail(id) {
-        wepy.navigateTo({ url: '/pages/detail?id=10088&from=home' })
+      // 跳转至详情页（新开页面）
+      handleNavToDetail(id, currentName) {
+        wepy.navigateTo({ url: `/pages/detail/index?id=${id}&from=${currentName}` })
       },
 
-      handleRedirectToDetail(id) {
-        wepy.redirectTo({ url: '/pages/detail?id=10088&from=home' })
+      // 跳转至详情页（覆盖当前记录）
+      handleRedirectToDetail() {
+        wepy.redirectTo({ url: `/pages/detail/index?id=10099&from=home` })
       },
 
       // 触发子组件定义的events
@@ -239,7 +261,89 @@
       // 用于测试方法执行
       testMethod(data) {
         console.log('index testMethod:', data)
-      }
+      },
+
+      // 显示 loading 提示框
+      handleShowLoading() {
+        wx.showLoading({
+          // 提示的内容
+          title: '加载中',
+          // 是否显示透明蒙层，防止触摸穿透，默认：false
+          mask: true,
+        })
+
+        setTimeout(function () {
+          // 需主动调用 wx.hideLoading 才能关闭提示框
+          wx.hideLoading()
+        }, 2000)
+      },
+
+      // 显示消息提示框
+      handleShowToast() {
+        wx.showToast({
+          // 提示的内容
+          title: '成功',
+          // iconl类型，默认：success
+          icon: 'success',
+          // 提示的延迟时间，默认：1500（毫秒）
+          duration: 2000,
+          // 是否显示透明蒙层，防止触摸穿透，默认：false
+          mask: true,
+        })
+      },
+
+      // 显示模态对话框
+      handleShowModal() {
+        wx.showModal({
+          // 提示的标题
+          title: '提示',
+          // 提示的内容
+          content: '这是一个模态弹窗',
+          // 是否显示取消按钮，默认为：true
+          showCancel: true,
+          // 取消按钮的文字，最多 4 个字符
+          cancelText: '取消',
+          // 确认按钮的文字，最多 4 个字符
+          confirmText: '确认',
+          // 接口调用成功的回调函数
+          success(res) {
+            if (res.confirm) {
+              console.log('index handleShowModal: 用户点击确定')
+            } else if (res.cancel) {
+              console.log('index handleShowModal: 用户点击取消')
+            }
+          }
+        })
+      },
+
+
+      // 显示操作菜单
+      handleShowActionSheet() {
+        const actionList = [
+          {name: 'scan', label: '扫一扫'},
+          {name: 'shake', label: '摇一摇'},
+          {name: 'look', label: '看一看'},
+        ]
+
+        wx.showActionSheet({
+          //按钮的文字数组，数组长度最大为6个
+          itemList: actionList.map((item) => item.label),
+          //按钮的文字颜色
+          itemColor: '#000000',
+          // 选择操作项时的回调函数
+          success(res) {
+            // res.tapIndex
+            // 用户点击的按钮序号，从上到下的顺序，从0开始
+            const selected = actionList[res.tapIndex]
+            console.log('index showActionSheet-success', selected)
+          },
+          // 取消选择时的回调函数(点击取消、蒙层时触发)
+          fail(res) {
+            console.log('index showActionSheet-fail', res.errMsg)
+          }
+        });
+
+      },
     }
 
     // WePY组件间通信事件
@@ -337,7 +441,12 @@
 
       // 接口请求完成
       if (res.data.errorCode === 0) {
-        console.log('index loadPageData res:', res)
+        // 更新页面数据
+        this.pageDone = true
+        this.pageData = res.data.data || {}
+
+        // 在异步函数中更新数据的时候，必须手动调用$apply方法，才会触发脏数据检查流程的运行。
+        this.$apply()
       } else {
         console.log('index loadPageData err:', res)
       }
@@ -368,8 +477,9 @@
     font-size: 24rpx;
     color: gray;
   }
+
   // 使用新增类名对组件样式进行覆盖
-  .panel--index {
+  .panel--special {
     .panel-title {
       padding-bottom: 10rpx;
       border-bottom: 1px solid #eee;

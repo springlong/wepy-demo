@@ -12,5 +12,6 @@
 	"appid": "touristappid",
 	"projectname": "wepy-test",
 	"miniprogramRoot": "dist/",
+	"libVersion": "2.6.0",
 	"condition": {}
 }
