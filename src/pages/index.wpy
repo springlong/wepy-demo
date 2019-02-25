@@ -326,18 +326,21 @@
     }
 
     // 自定义方法放在外层
-    loadPageData() {
+    async loadPageData() {
       console.log('index loadPageData')
 
       // 请求数据
-      Actions.getHomeData({
+      const res = await Actions.getHomeData({
         city: 'shanghai',
         model: 'more',
-      }).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
       })
+
+      // 接口请求完成
+      if (res.data.errorCode === 0) {
+        console.log('index loadPageData res:', res)
+      } else {
+        console.log('index loadPageData err:', res)
+      }
     }
   }
 </script>

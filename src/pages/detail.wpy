@@ -1,22 +1,29 @@
 <template>
   <view class="container">
-    <view class="row">
-      <text>详情展示页</text>
+    <view class="page-done" wx:if="pageDone">
+      <view class="group-wrap">
+        <view class="row">{{pageData.title}}</view>
+        <view class="row">{{pageData.content}}</view>
+      </view>
+      <view class="group-wrap">
+        <view class="row">
+          <navigator url="/pages/index">navigate 返回首页</navigator>
+        </view>
+        <view class="row">
+          <navigator url="/pages/index" open-type="redirect">redirect 返回首页</navigator>
+        </view>
+        <view class="row">
+          <navigator url="/pages/index" open-type="navigateBack">navigateBack 返回首页</navigator>
+        </view>
+      </view>
     </view>
-    <view class="row">
-      <navigator url="/pages/index">navigate 返回首页</navigator>
-    </view>
-    <view class="row">
-      <navigator url="/pages/index" open-type="redirect">redirect 返回首页</navigator>
-    </view>
-    <view class="row">
-      <navigator url="/pages/index" open-type="navigateBack">navigateBack 返回首页</navigator>
-    </view>
+    <view class="page-loading" wx:else>数据加载中...</view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import Actions from '@/actions/actions'
 
   export default class Detail extends wepy.page {
     // 页面配置
@@ -35,6 +42,11 @@
 
     // 组件数据
     data = {
+      // 页面数据加载完成
+      pageDone: false,
+
+      // 页面数据
+      pageData: {},
     }
 
     // 计算属性
@@ -98,8 +110,21 @@
     }
 
     // 自定义方法放在外层
-    loadPageData() {
+    async loadPageData() {
       console.log('detail loadPageData')
+
+      // 请求数据
+      const res = await Actions.getDetailData({
+        id: '1008088'
+      })
+
+      // 接口请求完成
+      if (res.data.errorCode === 0) {
+        this.pageDone = true
+        this.pageData = res.data.data || {}
+      } else {
+        console.log('index loadPageData err:', res)
+      }
     }
   }
 </script>

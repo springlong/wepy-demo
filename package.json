@@ -4,11 +4,12 @@
   "description": "A WePY project",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "wepy build --watch",
+    "dev": "concurrently \"wepy build --watch\" \"npm run mock\"",
     "build": "cross-env NODE_ENV=production wepy build --no-cache",
     "dev:web": "wepy build --output web",
     "clean": "find ./dist -maxdepth 1 -not -name 'project.config.json' -not -name 'dist' | xargs rm -rf",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mock": "node ./mock/mock-server.js"
   },
   "wepy": {
     "module-a": false,
@@ -17,9 +18,15 @@
   "author": "阳团 <yangtuan2009@126.com>",
   "license": "MIT",
   "dependencies": {
+    "concurrently": "^4.1.0",
+    "http": "^0.0.0",
+    "open": "^0.0.5",
+    "query-string": "^6.2.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-promise": "^0.5.3",
+    "shelljs": "^0.8.3",
+    "url": "^0.11.0",
     "wepy": "^1.7.2",
     "wepy-async-function": "^1.4.4",
     "wepy-com-toast": "^1.0.2",
@@ -32,6 +39,7 @@
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "chokidar": "^2.1.2",
     "cross-env": "^5.1.3",
     "eslint": "^3.18.0",
     "eslint-config-standard": "^7.1.0",
@@ -39,9 +47,9 @@
     "eslint-plugin-html": "^2.0.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.0.1",
-    "wepy-eslint": "^1.5.3",
     "less": "^3.8.1",
     "wepy-compiler-babel": "^1.5.1",
-    "wepy-compiler-less": "^1.3.10"
+    "wepy-compiler-less": "^1.3.10",
+    "wepy-eslint": "^1.5.3"
   }
 }

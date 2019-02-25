@@ -28,7 +28,12 @@
 
     constructor () {
       super()
+
+      // wepy 开启 promise 和 async await 需要手动启用
+      // wepy项目中使用Promise https://github.com/Tencent/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise
+      // wepy项目中使用async await https://github.com/Tencent/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await
       this.use('requestfix')
+      this.use('promisify')
     }
 
     onLaunch() {
