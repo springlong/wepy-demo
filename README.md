@@ -4,10 +4,46 @@
 
 官方文档：[https://tencent.github.io/wepy/document.html#/](https://tencent.github.io/wepy/document.html#/)
 
+## 导航
+
+- [wepy demo测试的功能点](#wepy-demo测试的功能点)
+- [wepy小程序开发基本规范](#wepy小程序开发基本规范)
+  * [目录结构](#目录结构)
+  * [文件命名规则](#文件命名规则)
+  * [代码书写规范](#代码书写规范)
+- [wepy小程序开发注意事项](#wepy小程序开发注意事项)
+
+## wepy demo测试的功能点
+
+- 获取微信用户信息
+- 微信常用API调用
+- 页面数据的绑定和更新
+- 条件语句&循环语句
+- 路由跳转
+- 事件绑定（传值问题）
+- 自定义组件的使用（组件循环、Slot多层嵌套等问题）
+- 组件通信
+  * 父组件派发事件给子组件
+  * 子组件传递事件给父组件
+  * 父组件访问子组件的方法
+  * 子组件访问父组件的方法
+  * 兄弟组件之间的通信
+- 接口调用&Mock服务
+- Redux状态管理（待完成）
+- 表单的校验和提交（待完成）
+- 自定义UI组件的使用（待完成）
+- 第三方UI组件的使用（待完成）
+- 登录流程的代码实现（待完成）
+- 下拉滚动加载列表的统一封装（待完成）
+- 好友分享、朋友圈分享统一封装（待完成）
+- 开发环境和生产环境差异化处理（待完成）
+- 微信小程序继承Jenkins（待完成）
+
 ## wepy小程序开发基本规范
 
 ### 目录结构
 
+```html
 |-- dist
 |-- mock                      # mock数据
 |-- node_modules
@@ -15,6 +51,17 @@
 |   |-- actions               # 接口目录
 |   |   |-- actions.js        # 接口请求的汇总文件
 |   |   |-- request.js        # request请求方法的封装处理
+|   |-- assets                # 静态资源
+|   |   |-- fonts             # 字体文件目录
+|   |   |-- images            # 图片目录
+|   |   |   |-- banner        # 广告图
+|   |   |   |-- icons         # icon图标
+|   |   |-- styles            # 样式目录
+|   |   |   |-- _base.scss    # 基础的变量、mixins、placeholder、functions声明
+|   |   |   |-- reset.scss    # 重置样式
+|   |   |   |-- iconfont.scss # 字体样式
+|   |   |   |-- common.scss   # 公共样式
+|   |   |-- vant              # 第三方组件库(暂时不确定放哪里合适)
 |   |-- components            # 公共组件目录
 |   |   |-- ComA              # 组件按目录分类存放
 |   |   |   |-- index.wpy     # 组件的入口文件
@@ -31,27 +78,32 @@
 |   |   |   |   |-- CompA.wpy # 页面下的子模块文件
 |   |   |   |-- index.wpy     # 页面的入口文件
 |   |-- store                 # redux状态管理器
+|   |-- utils                 # 工具函数目录
+|   |   |-- util.js           # 工具函数文件
+|   |   |-- dict.js           # 字典文件
 |   |-- app.wpy               # 小程序配置项（等同于原生的app.js、app.json和app.wxss）
 |-- package.json              # 项目的package配置
 |-- project.config.json       # wepy项目配置
 |-- wepy.config.js            # wepy打包配置
-
+```
 
 ### 文件命名规则
 
-**图片命名：**
+- **图片命名：**
 
 统一采用小写，多个单词用下划线连接，`error.png`、`error_large.png`等，并且同一类文件要求使用文件夹分类存放。
 
-**页面命名：**
+- **页面命名：**
 
 统一采用驼峰式命名方式，`home.wpy`、`list.wpy`、`detail.wpy`、`searchResult.wpy`。
 
-**组件命名：**
+- **组件命名：**
 
 统一采用首字母大写的形式命名，`Panel.wpy`、`SearchResult.wpy`、`LoadingMore.wpy`。
 
-### 组件的引用声明统一采用首字母大写，提高辨识度
+### 代码书写规范
+
+- **组件的引用声明统一采用首字母大写，提高辨识度**
 
 ```js
 import LoadMore from '../components/LoadMore'
@@ -61,7 +113,7 @@ components = {
 }
 ```
 
-### 组件的自定义事件统一使用 `on` 前缀
+- **组件的自定义事件统一使用 on 前缀**
 
 ```html
 <LoadMore
@@ -71,7 +123,7 @@ components = {
 />
 ```
 
-### events中用于组件通信的事件函数统一使用 `on` 前缀
+- **events中用于组件通信的事件函数统一使用 on 前缀**
 
 ```js
 events = {
@@ -82,7 +134,7 @@ events = {
 }
 ```
 
-### methods中的事件处理函数统一使用 `handle` 前缀
+- **methods中的事件处理函数统一使用 handle 前缀**
 
 ```js
 methods = {
@@ -93,7 +145,7 @@ methods = {
 }
 ```
 
-## 开发注意事项
+## wepy小程序开发注意事项
 
 ### wepy封装的api可能与官方原生有差异
 

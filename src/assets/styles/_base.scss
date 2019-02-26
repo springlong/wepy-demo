@@ -1,0 +1,252 @@
+@charset "utf-8";
+
+// $vars
+//--------------------------------------------------------------------------
+$color-primary: #333;           // 主要文字
+$color-secondary: #666;         // 次要文字
+$color-muted: #999;             // 减弱文字
+$color-success: #4ed6d1;        // 成功
+$color-warning: #f33;           // 警告
+$color-error: #f33;             // 错误
+$color-info: #ff7300;           // 提示文字
+$color-link: #6f55c0;           // 超链接
+$color-link-hover: #6f55c0;     // 超链接-鼠标悬浮
+$color-price: #6f55c0;          // 价格
+$support-for-ie6: false;        // 是否支持IE6
+$support-for-ie8: false;        // 是否支持IE8
+
+
+
+// mixins
+// ==================================================================================
+
+// CSS3属性书写
+@mixin css3($property: transition, $value: ease-out .25s){
+  @each $prefix in -webkit-, -moz-, -ms-, -o-, ''{
+    #{$prefix}#{$property}: $value;
+  }
+}
+
+// 透明度
+@mixin opacity($opacity: 1){
+  opacity: $opacity;
+  @if($support-for-ie8){
+    filter: alpha(opacity=$opacity * 100);
+  }
+}
+
+// 透明背景颜色
+@mixin bgOpacity($color, $opacity){
+
+  $color: rgba($color, $opacity);
+  $iecolor: ie-hex-str($color);
+
+  background-color: $color;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled='true',startColorstr='#{$iecolor}', endColorstr='#{$iecolor}');
+
+  :root &{
+    filter: none;
+  }
+}
+
+// 三角形生成器
+%triangle-basic{
+  overflow: hidden;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+}
+@mixin triangle($direction: top, $width: 5px, $color: #A2A2A2){
+  @extend %triangle-basic;
+  border: $width solid transparent;
+  border-#{$direction}: none;
+  border-#{reverseDirection($direction)}-color: $color;
+}
+
+// 箭头生成器
+%arrow-basic{
+  position: relative;
+  display: inline-block;
+}
+%arrow-basic:before,
+%arrow-basic:after{
+  content: '';
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+@mixin arrow($direction: top, $width: 5px, $color: #A2A2A2, $size: 1px, $defaltColor: #fff){
+
+  &{
+    @extend %arrow-basic;
+  }
+
+  @if($direction == top){
+
+    &{
+      width: $width * 2;
+      height: $width;
+    }
+    &:before{
+      top: -$width;
+      left: 0;
+    }
+    &:after{
+      top: -$width + $size;
+      left: 0;
+    }
+  }
+  @else if($direction == bottom){
+
+    &{
+      width: $width * 2;
+      height: $width;
+    }
+    &:before{
+      top: 0;
+      left: 0;
+    }
+    &:after{
+      top: -$size;
+      left: 0;
+    }
+
+  }
+  @else if($direction == left){
+
+    &{
+      width: $width;
+      height: $width * 2;
+    }
+    &:before{
+      top: 0;
+      left: -$width;
+    }
+    &:after{
+      top: 0;
+      left: -$width + $size;
+    }
+
+  }
+  @else if($direction == right){
+
+    &{
+      width: $width;
+      height: $width * 2;
+    }
+    &:before{
+      top: 0;
+      left: 0;
+    }
+    &:after{
+      top: 0;
+      left: -$size;
+    }
+
+  }
+
+  $direction: reverseDirection($direction);
+
+  &:before,
+  &:after{
+    border: $width solid transparent;
+    border-#{$direction}-color: $color;
+  }
+
+  &:after{
+    border-#{$direction}-color: $defaltColor;
+  }
+}
+
+
+
+// placeholder
+// ==================================================================================
+
+// 清除浮动
+@mixin clearfix(){
+  @if($support-for-ie6){
+    *zoom: 1;
+  }
+  &:after{
+    content: "";
+    clear: both;
+    display: block;
+    height: 0;
+  }
+}
+%clearfix{
+  @include clearfix();
+}
+
+// 单行省略号
+@mixin ellipsis(){
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+%ellipsis{
+  @include ellipsis();
+}
+
+// 多行省略号
+@mixin ellipsis-lines(){
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+%ellipsis{
+  @include ellipsis-lines();
+}
+
+
+
+// functions
+//==================================================================================
+
+// 返回相反的方向
+// left => right, right => left, top => bottom, bottom => top
+@function reverseDirection($direction: left){
+  @if($direction == left){
+    @return right;
+  }
+  @if($direction == right){
+    @return left;
+  }
+  @if($direction == top){
+    @return bottom;
+  }
+  @if($direction == bottom){
+    @return top;
+  }
+  @return $direction;
+}
+
+// 计算文本段落marginTop属性值（根据两段文字的字号和行高进行计算）
+@function cacleMarginTop($topValue: 20, $size1: 36, $height1: 54, $size2: 24, $height2: 38){
+  @return $topValue - round(($height1 - $size1) / 2) - round(($height2 - $size2) / 2);
+}
+
+// 计算文本段落marginTop属性值（根据一行文字的字号和行高进行计算）
+@function cacleMarginTopSingle($topValue: 20, $size1: 36, $height1: 54){
+  @return $topValue - round(($height1 - $size1) / 2);
+}
+
+// 计算百分比
+@function caclHeightPercent($value: 0, $baseHeight: 1080){
+  @return unquote($value / $baseHeight * 100 + '%');
+}
+
+$baseFontSize: 100px;
+
+@function p2r($px) {
+  @return $px / $baseFontSize * 1rem;
+}
+
+@function p2p($px, $baseWidth){
+  @return ($px / $baseWidth) * 100%;
+}
+

@@ -55,65 +55,6 @@
   }
 </script>
 
-<style lang="less">
-  view, text, navigator {
-    font-size: 24rpx;
-    line-height: 1.5em;
-  }
-
-  navigator {
-    font-size: 24rpx;
-    line-height: 50rpx;
-    color: rgb(47, 106, 235);
-  }
-
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-between;
-    box-sizing: border-box;
-    height: 100%;
-    padding: 0 20rpx;
-    font-size: 24rpx;
-    line-height: 1.5em;
-  }
-
-  .row {
-    margin: 20rpx 0;
-  }
-
-  .module-title {
-    width: 100%;
-    border-left: 2rpx solid #eee;
-    margin: 30rpx 0 20rpx;
-    font-size: 32rpx;
-    font-weight: bold;
-    line-height: 1.5em;
-    text-align: left;
-    text-indent: 20rpx;
-    color: #139bb1;
-  }
-
-  .group-wrap {
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 20rpx;
-    text-align: left;
-    font-size: 24rpx;
-    padding: 20rpx 30rpx;
-    border: 1px solid #ccc;
-  }
-
-  .group-title {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 20rpx;
-    font-size: 28rpx;
-    font-weight: bold;
-  }
-
-  .group-content {
-    padding: 15rpx;
-  }
+<style lang="scss">
+  @import "./assets/styles/common";
 </style>

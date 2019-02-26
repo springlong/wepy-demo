@@ -131,6 +131,8 @@
   import TestSlot from '@/components/TestDemo/TestSlot'
   import CompA from '@/components/TestDemo/CompA'
   import CompB from '@/components/TestDemo/CompB'
+  import Dict from '@/utils/dict'
+  import Util from '@/utils/util'
 
   import Actions from '@/actions/actions'
 
@@ -404,6 +406,14 @@
 
       // 加载页面数据
       this.loadPageData()
+
+      // 字典数据的遍历-demo
+      Object.values(Dict.TOWARDS).forEach(item => {
+        console.log(item)
+      })
+
+      // 工具函数-demo
+      console.log(Util.showTime())
     }
 
     // page生命周期：页面显示/切入前台时触发
@@ -454,7 +464,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .userinfo {
     display: flex;
     flex-direction: column;
