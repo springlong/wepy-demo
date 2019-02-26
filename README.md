@@ -60,7 +60,7 @@
 |   |   |-- styles            # 样式目录
 |   |   |   |-- _base.scss    # 基础的变量、mixins、placeholder、functions声明
 |   |   |   |-- reset.scss    # 重置样式
-|   |   |   |-- iconfont.scss # 字体样式
+|   |   |   |-- font.scss     # 字体样式
 |   |   |   |-- common.scss   # 公共样式
 |   |   |-- vant              # 第三方组件库(暂时不确定放哪里合适)
 |   |-- components            # 公共组件目录
