@@ -1,6 +1,6 @@
 <template>
   <view class="loadmore-wrap" wx:if="{{show}}">
-    <image src="./images/loadding.gif"/>
+    <image src="./images/loading.gif"/>
     <text>{{message}}</text>
   </view>
 </template>
